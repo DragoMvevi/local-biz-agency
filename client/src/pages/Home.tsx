@@ -360,7 +360,7 @@ export default function Home() {
             viewport={{ once: true }}
           >
             <img
-              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663609865308/VVyznFisNfV5ZEVTdonuV4/portfolio-templates-edXNBhHcaPAEg8ZjYHj6kz.webp"
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663609865308/VVyznFisNfV5ZEVTdonuV4/portfolio-templates-clean-oJy5DMSRd62dEB7q8M3pUq.webp"
               alt="Portfolio Templates"
               className="w-full h-auto"
             />
