@@ -1,16 +1,61 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, Globe, Zap, DollarSign, Smartphone, Search, BarChart3 } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 /**
- * Design Philosophy: Modern Minimalist with Bold Accents
- * - Navy blue (#1a2332) establishes professional credibility
- * - Emerald green (#10b981) signals growth and value proposition
- * - Poppins + Inter typography creates modern, friendly hierarchy
- * - Asymmetric layouts avoid generic, corporate feel
- * - Subtle animations enhance UX without being gratuitous
+ * Design Philosophy: Premium Dark Navy & Cream
+ * - Deep Navy (#0f1419) for premium, professional feel
+ * - Gold/Warm Cream (#d4a574) for luxury accents
+ * - Custom SVG icons for uniqueness
+ * - Extensive animations with Framer Motion
+ * - Sophisticated, elegant interactions
  */
+
+// Custom SVG Icons
+const CustomIcons = {
+  Globe: () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M2 12h20" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  ),
+  Zap: () => (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+    </svg>
+  ),
+  Code: () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
+    </svg>
+  ),
+  Palette: () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="6" />
+      <circle cx="12" cy="6" r="1.5" fill="currentColor" />
+      <circle cx="16.5" cy="16.5" r="1.5" fill="currentColor" />
+      <circle cx="7.5" cy="16.5" r="1.5" fill="currentColor" />
+    </svg>
+  ),
+  ShoppingCart: () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
+      <circle cx="9" cy="21" r="1" />
+      <circle cx="20" cy="21" r="1" />
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+    </svg>
+  ),
+  Rocket: () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
+      <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+      <circle cx="11" cy="11" r="1" fill="currentColor" />
+    </svg>
+  ),
+};
 
 // Animated counter component
 function AnimatedCounter({ end, duration = 2000 }: { end: number; duration?: number }) {
@@ -33,324 +78,507 @@ function AnimatedCounter({ end, duration = 2000 }: { end: number; duration?: num
   return <span>{count}</span>;
 }
 
-// Parallax scroll hook
-function useParallax(offset = 0.5) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [offset_y, setOffset_y] = useState(0);
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (ref.current) {
-        const rect = ref.current.getBoundingClientRect();
-        const elementOffset = window.innerHeight - rect.top;
-        setOffset_y(elementOffset * offset);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [offset]);
-
-  return { ref, offset_y };
-}
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+    },
+  },
+};
 
 export default function Home() {
-  const { ref: servicesRef, offset_y: servicesOffset } = useParallax(0.3);
-  const { ref: pricingRef, offset_y: pricingOffset } = useParallax(0.2);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   return (
-    <div className="min-h-screen w-full bg-background text-foreground">
+    <div className="min-h-screen w-full bg-background text-foreground overflow-hidden">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <motion.nav
+        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border"
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="container flex items-center justify-between h-16">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <Globe className="w-5 h-5 text-white" />
+          <motion.div
+            className="flex items-center gap-2"
+            whileHover={{ scale: 1.05 }}
+          >
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-accent">
+              <CustomIcons.Globe />
             </div>
             <span className="font-display text-lg font-bold text-foreground">LocalBiz</span>
-          </div>
+          </motion.div>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#services" className="text-sm font-medium hover:text-accent transition-colors">Services</a>
-            <a href="#pricing" className="text-sm font-medium hover:text-accent transition-colors">Pricing</a>
-            <a href="#contact" className="text-sm font-medium hover:text-accent transition-colors">Contact</a>
+            {["Services", "Pricing", "Contact"].map((item) => (
+              <motion.a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="text-sm font-medium hover:text-accent transition-colors"
+                whileHover={{ y: -2 }}
+              >
+                {item}
+              </motion.a>
+            ))}
           </div>
-          <Button className="bg-accent hover:bg-accent/90 text-accent-foreground">Get Started</Button>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
+              Get Started
+            </Button>
+          </motion.div>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* Hero Section */}
-      <section
-        className="relative pt-32 pb-20 px-4 overflow-hidden"
-        style={{
-          backgroundImage: "url('https://d2xsxph8kpxj0f.cloudfront.net/310519663609865308/VVyznFisNfV5ZEVTdonuV4/hero-background-4ehQKXVvjwLdrGvxqqxWKE.webp')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
+      <section className="relative pt-32 pb-24 px-4 overflow-hidden">
+        {/* Animated background elements */}
+        <motion.div
+          className="absolute top-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl"
+          animate={{
+            y: [0, 30, 0],
+            x: [0, 20, 0],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+          }}
+        />
+        <motion.div
+          className="absolute bottom-0 left-0 w-80 h-80 bg-primary/10 rounded-full blur-3xl"
+          animate={{
+            y: [0, -30, 0],
+            x: [0, -20, 0],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+          }}
+        />
 
         <div className="container relative z-10 max-w-4xl">
-          <div className="space-y-6 animate-fade-in">
-            <div className="inline-block px-4 py-2 rounded-full bg-accent/10 border border-accent/20">
-              <span className="text-sm font-medium text-accent">🚀 Affordable Web Design for Local Businesses</span>
-            </div>
+          <motion.div
+            className="space-y-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div
+              className="inline-block px-4 py-2 rounded-full bg-accent/10 border border-accent/30"
+              variants={itemVariants}
+            >
+              <span className="text-sm font-medium text-accent">✨ Premium Web Design for Local Businesses</span>
+            </motion.div>
 
-            <h1 className="text-5xl md:text-6xl font-display font-bold leading-tight text-foreground">
-              Professional Websites at
-              <span className="block text-accent">Unbeatable Prices</span>
-            </h1>
+            <motion.h1
+              className="text-5xl md:text-7xl font-display font-bold leading-tight text-foreground"
+              variants={itemVariants}
+            >
+              Stunning Websites
+              <span className="block text-accent">That Convert</span>
+            </motion.h1>
 
-            <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-              We create stunning, fast-loading websites for local businesses that drive real results. No hidden fees, no long contracts—just quality web design that fits your budget.
-            </p>
+            <motion.p
+              className="text-lg text-muted-foreground max-w-2xl leading-relaxed"
+              variants={itemVariants}
+            >
+              Professional, fast-loading websites designed to grow your local business. Transparent pricing, no hidden fees, and results that matter.
+            </motion.p>
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground group">
-                Start Your Project
-                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button size="lg" variant="outline" className="border-border hover:bg-muted">
-                View Our Work
-              </Button>
-            </div>
-          </div>
+            <motion.div
+              className="flex flex-col sm:flex-row gap-4 pt-4"
+              variants={itemVariants}
+            >
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground group font-semibold">
+                  Start Your Project
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button size="lg" variant="outline" className="border-border hover:bg-muted font-semibold">
+                  View Our Work
+                </Button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-gradient-to-r from-primary/5 to-accent/5 border-y border-border">
+      <motion.section
+        className="py-16 bg-gradient-to-r from-primary/5 to-accent/5 border-y border-border"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
         <div className="container">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-display font-bold text-accent mb-2">
-                <AnimatedCounter end={500} />+
-              </div>
-              <p className="text-sm text-muted-foreground">Websites Created</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-display font-bold text-accent mb-2">
-                <AnimatedCounter end={98} />%
-              </div>
-              <p className="text-sm text-muted-foreground">Client Satisfaction</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-display font-bold text-accent mb-2">
-                <AnimatedCounter end={50} />%
-              </div>
-              <p className="text-sm text-muted-foreground">Cost Savings vs Industry</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-display font-bold text-accent mb-2">
-                <AnimatedCounter end={24} />h
-              </div>
-              <p className="text-sm text-muted-foreground">Average Turnaround</p>
-            </div>
+            {[
+              { label: "Websites Created", value: 500 },
+              { label: "Client Satisfaction", value: 98 },
+              { label: "Cost Savings", value: 50 },
+              { label: "Hours Turnaround", value: 24 },
+            ].map((stat, idx) => (
+              <motion.div
+                key={idx}
+                className="text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div className="text-4xl md:text-5xl font-display font-bold text-accent mb-2">
+                  <AnimatedCounter end={stat.value} />
+                  {stat.label.includes("Satisfaction") ? "%" : stat.label.includes("Savings") ? "%" : stat.label.includes("Hours") ? "h" : "+"}
+                </div>
+                <p className="text-sm text-muted-foreground">{stat.label}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 px-4" ref={servicesRef}>
+      <section id="services" className="py-24 px-4">
         <div className="container">
-          <div className="max-w-3xl mb-16">
+          <motion.div
+            className="max-w-3xl mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-4 text-foreground">
               What We Offer
             </h2>
             <p className="text-lg text-muted-foreground">
-              From simple landing pages to full e-commerce solutions, we have the expertise to bring your vision to life.
+              Comprehensive web solutions tailored to your business needs.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Service Cards */}
+          <motion.div
+            className="grid md:grid-cols-2 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             {[
               {
-                icon: Smartphone,
-                title: "Responsive Design",
-                description: "Beautiful websites that look perfect on all devices—mobile, tablet, and desktop.",
-              },
-              {
-                icon: Zap,
+                icon: CustomIcons.Zap,
                 title: "Lightning Fast",
-                description: "Optimized for speed with fast load times that keep visitors engaged and boost SEO.",
+                description: "Optimized for speed with fast load times that keep visitors engaged.",
               },
               {
-                icon: Search,
-                title: "SEO Optimized",
-                description: "Built with search engines in mind so your business gets found by local customers.",
+                icon: CustomIcons.Code,
+                title: "Clean Code",
+                description: "Built with modern standards for maintainability and scalability.",
               },
               {
-                icon: BarChart3,
-                title: "Analytics Ready",
-                description: "Track visitor behavior and measure results with integrated analytics dashboards.",
+                icon: CustomIcons.Palette,
+                title: "Custom Design",
+                description: "Unique, beautiful designs that reflect your brand perfectly.",
+              },
+              {
+                icon: CustomIcons.Rocket,
+                title: "SEO Ready",
+                description: "Optimized for search engines to help customers find you.",
               },
             ].map((service, idx) => (
-              <Card
+              <motion.div
                 key={idx}
-                className="p-8 border border-border hover:border-accent/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group cursor-pointer"
-                style={{
-                  transform: `translateY(${servicesOffset * 0.1}px)`,
-                }}
+                variants={itemVariants}
+                onMouseEnter={() => setHoveredCard(idx)}
+                onMouseLeave={() => setHoveredCard(null)}
               >
-                <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
-                  <service.icon className="w-6 h-6 text-accent" />
-                </div>
-                <h3 className="text-xl font-display font-bold mb-2 text-foreground">{service.title}</h3>
-                <p className="text-muted-foreground">{service.description}</p>
-              </Card>
+                <Card className="p-8 border border-border hover:border-accent/50 transition-all duration-300 cursor-pointer h-full">
+                  <motion.div
+                    className="w-14 h-14 rounded-lg bg-accent/10 flex items-center justify-center mb-4 text-accent"
+                  animate={hoveredCard === idx ? { scale: 1.1 } : { scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  >
+                    <service.icon />
+                  </motion.div>
+                  <h3 className="text-xl font-display font-bold mb-2 text-foreground">{service.title}</h3>
+                  <p className="text-muted-foreground">{service.description}</p>
+                </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section
-        id="pricing"
-        className="py-20 px-4"
-        ref={pricingRef}
-        style={{
-          backgroundImage: "url('https://d2xsxph8kpxj0f.cloudfront.net/310519663609865308/VVyznFisNfV5ZEVTdonuV4/pricing-background-NYBDQpDQKzqp4UuHARM6qf.webp')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundAttachment: "fixed",
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-
-        <div className="container relative z-10">
-          <div className="max-w-3xl mx-auto text-center mb-16">
+      <section id="pricing" className="py-24 px-4 bg-gradient-to-b from-primary/5 to-transparent">
+        <div className="container">
+          <motion.div
+            className="max-w-3xl mx-auto text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-4 text-foreground">
               Simple, Transparent Pricing
             </h2>
             <p className="text-lg text-muted-foreground">
-              No hidden fees. No surprises. Just honest pricing for quality web design.
+              Choose the plan that fits your business. No hidden fees, ever.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Starter Plan */}
-            <Card className="p-8 border border-border hover:border-accent/50 transition-all duration-300 hover:shadow-lg">
-              <h3 className="text-2xl font-display font-bold mb-2 text-foreground">Starter</h3>
-              <p className="text-muted-foreground mb-6">Perfect for small businesses</p>
-              <div className="mb-6">
-                <span className="text-4xl font-display font-bold text-accent">$499</span>
-                <span className="text-muted-foreground ml-2">one-time</span>
-              </div>
-              <ul className="space-y-3 mb-8 text-sm">
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span>5-page website</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span>Mobile responsive</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span>Contact form</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span>1 month support</span>
-                </li>
-              </ul>
-              <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">Get Started</Button>
-            </Card>
+          {/* One-Time Plans */}
+          <motion.div
+            className="mb-16"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="text-2xl font-display font-bold mb-8 text-center text-foreground">One-Time Payment</h3>
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {/* Basic Plan */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -8 }}
+              >
+                <Card className="p-8 border border-border hover:border-accent/50 transition-all duration-300 h-full">
+                  <h3 className="text-2xl font-display font-bold mb-2 text-foreground">Simple Website</h3>
+                  <p className="text-muted-foreground mb-6">Perfect for startups</p>
+                  <div className="mb-8">
+                    <span className="text-5xl font-display font-bold text-accent">$200</span>
+                    <span className="text-muted-foreground ml-2">one-time</span>
+                  </div>
+                  <ul className="space-y-3 mb-8 text-sm">
+                    {[
+                      "5-page website",
+                      "Mobile responsive",
+                      "Contact form",
+                      "Basic SEO",
+                      "1 month support",
+                    ].map((feature, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-accent" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
+                      Get Started
+                    </Button>
+                  </motion.div>
+                </Card>
+              </motion.div>
 
-            {/* Professional Plan - Featured */}
-            <Card className="p-8 border-2 border-accent shadow-lg relative">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-accent text-accent-foreground text-xs font-bold rounded-full">
-                MOST POPULAR
-              </div>
-              <h3 className="text-2xl font-display font-bold mb-2 text-foreground">Professional</h3>
-              <p className="text-muted-foreground mb-6">Best for growing businesses</p>
-              <div className="mb-6">
-                <span className="text-4xl font-display font-bold text-accent">$999</span>
-                <span className="text-muted-foreground ml-2">one-time</span>
-              </div>
-              <ul className="space-y-3 mb-8 text-sm">
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span>Unlimited pages</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span>E-commerce ready</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span>SEO optimization</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span>3 months support</span>
-                </li>
-              </ul>
-              <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">Get Started</Button>
-            </Card>
+              {/* E-Commerce Plan */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -8 }}
+              >
+                <Card className="p-8 border-2 border-accent shadow-lg relative h-full">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-accent text-accent-foreground text-xs font-bold rounded-full">
+                    MOST POPULAR
+                  </div>
+                  <h3 className="text-2xl font-display font-bold mb-2 text-foreground">E-Commerce Store</h3>
+                  <p className="text-muted-foreground mb-6">For growing businesses</p>
+                  <div className="mb-8">
+                    <span className="text-5xl font-display font-bold text-accent">$500</span>
+                    <span className="text-muted-foreground ml-2">one-time</span>
+                  </div>
+                  <ul className="space-y-3 mb-8 text-sm">
+                    {[
+                      "Unlimited pages",
+                      "E-commerce ready",
+                      "Product catalog",
+                      "Payment integration",
+                      "Advanced SEO",
+                      "3 months support",
+                    ].map((feature, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-accent" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
+                      Get Started
+                    </Button>
+                  </motion.div>
+                </Card>
+              </motion.div>
+            </div>
+          </motion.div>
 
-            {/* Enterprise Plan */}
-            <Card className="p-8 border border-border hover:border-accent/50 transition-all duration-300 hover:shadow-lg">
-              <h3 className="text-2xl font-display font-bold mb-2 text-foreground">Enterprise</h3>
-              <p className="text-muted-foreground mb-6">For large-scale projects</p>
-              <div className="mb-6">
-                <span className="text-4xl font-display font-bold text-accent">Custom</span>
-                <span className="text-muted-foreground ml-2">pricing</span>
-              </div>
-              <ul className="space-y-3 mb-8 text-sm">
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span>Custom features</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span>API integration</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span>Dedicated support</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span>Ongoing maintenance</span>
-                </li>
-              </ul>
-              <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">Contact Us</Button>
-            </Card>
-          </div>
+          {/* Subscription Plans */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="text-2xl font-display font-bold mb-8 text-center text-foreground">Monthly Subscription</h3>
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {/* Basic Subscription */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -8 }}
+              >
+                <Card className="p-8 border border-border hover:border-accent/50 transition-all duration-300 h-full">
+                  <h3 className="text-2xl font-display font-bold mb-2 text-foreground">Basic Plan</h3>
+                  <p className="text-muted-foreground mb-6">Ongoing support & updates</p>
+                  <div className="mb-8">
+                    <span className="text-5xl font-display font-bold text-accent">$20</span>
+                    <span className="text-muted-foreground ml-2">/month</span>
+                  </div>
+                  <ul className="space-y-3 mb-8 text-sm">
+                    {[
+                      "Monthly updates",
+                      "Security monitoring",
+                      "Performance optimization",
+                      "Email support",
+                    ].map((feature, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-accent" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
+                      Subscribe
+                    </Button>
+                  </motion.div>
+                </Card>
+              </motion.div>
+
+              {/* Premium Subscription */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -8 }}
+              >
+                <Card className="p-8 border-2 border-accent shadow-lg relative h-full">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-accent text-accent-foreground text-xs font-bold rounded-full">
+                    BEST VALUE
+                  </div>
+                  <h3 className="text-2xl font-display font-bold mb-2 text-foreground">Premium Plan</h3>
+                  <p className="text-muted-foreground mb-6">Full support & features</p>
+                  <div className="mb-8">
+                    <span className="text-5xl font-display font-bold text-accent">$50</span>
+                    <span className="text-muted-foreground ml-2">/month</span>
+                  </div>
+                  <ul className="space-y-3 mb-8 text-sm">
+                    {[
+                      "Everything in Basic",
+                      "Priority support",
+                      "New features",
+                      "Analytics dashboard",
+                      "Monthly strategy call",
+                    ].map((feature, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-accent" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
+                      Subscribe
+                    </Button>
+                  </motion.div>
+                </Card>
+              </motion.div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section
+      <motion.section
         id="contact"
-        className="py-20 px-4 relative overflow-hidden"
-        style={{
-          backgroundImage: "url('https://d2xsxph8kpxj0f.cloudfront.net/310519663609865308/VVyznFisNfV5ZEVTdonuV4/cta-background-PFEreF2R9PZu7VdKKQ3F.webp')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
+        className="py-24 px-4 relative overflow-hidden bg-gradient-to-r from-primary via-primary/95 to-primary"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70" />
+        <motion.div
+          className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"
+          animate={{
+            y: [0, 40, 0],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+          }}
+        />
 
         <div className="container relative z-10 max-w-3xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-display font-bold mb-4 text-white">
+          <motion.h2
+            className="text-4xl md:text-5xl font-display font-bold mb-4 text-white"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
             Ready to Grow Your Business?
-          </h2>
-          <p className="text-lg text-white/80 mb-8">
+          </motion.h2>
+          <motion.p
+            className="text-lg text-white/80 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={{ once: true }}
+          >
             Let's create a website that brings real results. Get a free consultation today.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white hover:bg-white/90 text-primary group">
-              Start Your Project
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-              Schedule a Call
-            </Button>
-          </div>
+          </motion.p>
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button size="lg" className="bg-white hover:bg-white/90 text-primary group font-semibold">
+                Start Your Project
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 font-semibold">
+                Schedule a Call
+              </Button>
+            </motion.div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Footer */}
       <footer className="bg-foreground/5 border-t border-border py-12 px-4">
@@ -358,34 +586,47 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <Globe className="w-5 h-5 text-white" />
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-accent">
+                  <CustomIcons.Globe />
                 </div>
                 <span className="font-display font-bold">LocalBiz</span>
               </div>
-              <p className="text-sm text-muted-foreground">Affordable web design for local businesses.</p>
+              <p className="text-sm text-muted-foreground">Premium web design for local businesses.</p>
             </div>
             <div>
               <h4 className="font-display font-bold mb-4 text-foreground">Services</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-accent transition-colors">Web Design</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">E-commerce</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">SEO</a></li>
+                {["Web Design", "E-commerce", "SEO"].map((item) => (
+                  <li key={item}>
+                    <a href="#" className="hover:text-accent transition-colors">
+                      {item}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
               <h4 className="font-display font-bold mb-4 text-foreground">Company</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-accent transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Contact</a></li>
+                {["About", "Blog", "Contact"].map((item) => (
+                  <li key={item}>
+                    <a href="#" className="hover:text-accent transition-colors">
+                      {item}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
               <h4 className="font-display font-bold mb-4 text-foreground">Legal</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-accent transition-colors">Privacy</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Terms</a></li>
+                {["Privacy", "Terms"].map((item) => (
+                  <li key={item}>
+                    <a href="#" className="hover:text-accent transition-colors">
+                      {item}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -394,53 +635,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-
-      {/* Animations */}
-      <style>{`
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-fade-in {
-          animation: fade-in 0.8s ease-out forwards;
-        }
-
-        @keyframes slide-in-left {
-          from {
-            opacity: 0;
-            transform: translateX(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        .animate-slide-in-left {
-          animation: slide-in-left 0.6s ease-out forwards;
-        }
-
-        /* Smooth transitions for interactive elements */
-        button {
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        button:hover {
-          transform: translateY(-2px);
-        }
-
-        /* Parallax effect for cards */
-        .card-parallax {
-          transition: transform 0.1s ease-out;
-        }
-      `}</style>
     </div>
   );
 }
