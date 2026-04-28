@@ -227,7 +227,7 @@ export default function Home() {
               variants={itemVariants}
             >
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground group font-semibold px-8 py-6 text-base">
+                <Button size="lg" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} className="bg-accent hover:bg-accent/90 text-accent-foreground group font-semibold px-8 py-6 text-base">
                   {t("hero.cta1")}
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -250,15 +250,7 @@ export default function Home() {
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
       >
-        {/* Subtle background pattern */}
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: `url('${bgImage}')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
+  
 
         <div className="container relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -289,14 +281,6 @@ export default function Home() {
 
       {/* Services Section */}
       <section id="services" className="py-32 px-4 relative overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: `url('${bgImage}')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
 
         <div className="container relative z-10">
           <motion.div
@@ -333,7 +317,7 @@ export default function Home() {
                 onMouseEnter={() => setHoveredCard(idx)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
-                <Card className="p-10 border border-border hover:border-accent/50 transition-all duration-300 cursor-pointer h-full bg-background/50 backdrop-blur-sm">
+                <Card className="p-10 border border-border hover:border-accent/50 transition-all duration-300 cursor-pointer h-full bg-background/70 backdrop-blur-sm">
                   <motion.div
                     className="text-6xl mb-6"
                     animate={hoveredCard === idx ? { scale: 1.2, rotate: 5 } : { scale: 1, rotate: 0 }}
@@ -356,14 +340,6 @@ export default function Home() {
 
       {/* Pricing Section */}
       <section id="pricing" className="py-32 px-4 bg-gradient-to-b from-primary/8 to-transparent relative overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-25"
-          style={{
-            backgroundImage: `url('${bgImage}')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
 
         <div className="container relative z-10">
           <motion.div
@@ -408,7 +384,7 @@ export default function Home() {
                   <Card className={`p-12 transition-all duration-300 h-full flex flex-col relative ${
                     plan.featured
                       ? "border-2 border-accent shadow-2xl bg-gradient-to-br from-accent/10 to-background"
-                      : "border border-border hover:border-accent/50 bg-background/50 backdrop-blur-sm"
+                      : "border border-border hover:border-accent/50 bg-background/70 backdrop-blur-sm"
                   }`}>
                     {plan.featured && (
                       <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-6 py-2 bg-accent text-accent-foreground text-xs font-bold rounded-full shadow-lg">
@@ -434,7 +410,7 @@ export default function Home() {
                       ))}
                     </ul>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold py-6 text-base">
+                      <Button onClick={() => alert(`Selected: ${t(`pricing.${plan.key}`)} - $${plan.price}`)} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold py-6 text-base">
                         {t("pricing.getStarted")}
                       </Button>
                     </motion.div>
@@ -470,7 +446,7 @@ export default function Home() {
                   <Card className={`p-12 transition-all duration-300 h-full flex flex-col relative ${
                     plan.featured
                       ? "border-2 border-accent shadow-2xl bg-gradient-to-br from-accent/10 to-background"
-                      : "border border-border hover:border-accent/50 bg-background/50 backdrop-blur-sm"
+                      : "border border-border hover:border-accent/50 bg-background/70 backdrop-blur-sm"
                   }`}>
                     {plan.featured && (
                       <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-6 py-2 bg-accent text-accent-foreground text-xs font-bold rounded-full shadow-lg">
@@ -496,7 +472,7 @@ export default function Home() {
                       ))}
                     </ul>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold py-6 text-base">
+                      <Button onClick={() => alert(`Selected: ${t(`pricing.${plan.key}`)} - ${plan.price}/month`)} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold py-6 text-base">
                         {t("pricing.subscribe")}
                       </Button>
                     </motion.div>
@@ -555,7 +531,7 @@ export default function Home() {
             viewport={{ once: true }}
           >
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" className="bg-white hover:bg-white/90 text-primary group font-semibold px-8 py-6 text-base">
+              <Button size="lg" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })} className="bg-white hover:bg-white/90 text-primary group font-semibold px-8 py-6 text-base">
                 {t("cta.startProject")}
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
@@ -666,6 +642,9 @@ export default function Home() {
               </a> | 
               <a href="#" className="hover:text-accent transition-colors ml-2">
                 {t("footer.terms")}
+              </a> | 
+              <a href="/admin-login" className="hover:text-accent transition-colors ml-2 text-xs opacity-50 hover:opacity-100">
+                Admin
               </a>
             </p>
           </div>
