@@ -1,0 +1,1 @@
+<img src="/images/portfolio-templates.webp" alt="Portfolio Template" />
