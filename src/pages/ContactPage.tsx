@@ -11,29 +11,79 @@ export default function ContactPage() {
   const [result, setResult] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const checkRateLimit = () => {
+    const now = Date.now();
+    const lastSubmit = localStorage.getItem('lastFormSubmit');
+    const submitCountData = localStorage.getItem('formSubmitCount');
+    
+    // 1 minute delay
+    if (lastSubmit && now - parseInt(lastSubmit) < 60000) {
+      const secondsLeft = Math.ceil((60000 - (now - parseInt(lastSubmit))) / 1000);
+      return `Please wait ${secondsLeft} seconds before sending another message.`;
+    }
+    
+    // Max 20 per day
+    if (submitCountData) {
+      const { count, date } = JSON.parse(submitCountData);
+      const today = new Date().toDateString();
+      
+      if (date === today) {
+        if (count >= 20) {
+          return "You have reached the maximum number of messages for today.";
+        }
+      } else {
+        localStorage.setItem('formSubmitCount', JSON.stringify({ count: 0, date: today }));
+      }
+    } else {
+      localStorage.setItem('formSubmitCount', JSON.stringify({ count: 0, date: new Date().toDateString() }));
+    }
+    
+    return null;
+  };
+
+  const updateRateLimit = () => {
+    localStorage.setItem('lastFormSubmit', Date.now().toString());
+    const submitCountData = localStorage.getItem('formSubmitCount');
+    if (submitCountData) {
+      const { count, date } = JSON.parse(submitCountData);
+      localStorage.setItem('formSubmitCount', JSON.stringify({ count: count + 1, date }));
+    } else {
+      localStorage.setItem('formSubmitCount', JSON.stringify({ count: 1, date: new Date().toDateString() }));
+    }
+  };
+
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    
+    const rateLimitError = checkRateLimit();
+    if (rateLimitError) {
+      setResult("Error: " + rateLimitError);
+      return;
+    }
+    
     setIsSubmitting(true);
     setResult("");
     
     const formData = new FormData(event.currentTarget);
-    formData.append("access_key", "9c0b330d-8955-4f8c-a9f2-e08ce8c18101");
+    formData.append("_captcha", "false"); // Disable formsubmit captcha to allow seamless AJAX
 
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
+      const email = import.meta.env.VITE_CONTACT_EMAIL || 'midoumessai123456789@gmail.com';
+      const response = await fetch(`https://formsubmit.co/ajax/${email}`, {
         method: "POST",
         body: formData
       });
 
       const data = await response.json();
-      if (data.success) {
-        setResult("Form Submitted Successfully!");
+      if (response.ok || data.success) {
+        setResult("Message Sent Successfully!");
+        updateRateLimit();
         event.currentTarget.reset();
       } else {
-        setResult("Error: " + data.message);
+        setResult("Error: " + (data.message || "Failed to send message."));
       }
     } catch (error) {
-      setResult("An error occurred. Please try again.");
+      setResult("An error occurred. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
