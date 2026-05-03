@@ -1,12 +1,43 @@
 import { motion } from 'motion/react';
 import { useApp } from '../contexts/AppContext';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
 
 export default function ContactPage() {
   const { t } = useApp();
   const [searchParams] = useSearchParams();
   const selectedPlan = searchParams.get('plan') || '';
+  const [result, setResult] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setResult("");
+    
+    const formData = new FormData(event.currentTarget);
+    formData.append("access_key", "9c0b330d-8955-4f8c-a9f2-e08ce8c18101");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setResult("Form Submitted Successfully!");
+        event.currentTarget.reset();
+      } else {
+        setResult("Error: " + data.message);
+      }
+    } catch (error) {
+      setResult("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen pt-32 pb-24 px-6 flex flex-col items-center">
@@ -33,9 +64,9 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <form action={`https://formsubmit.co/${import.meta.env.VITE_CONTACT_EMAIL || 'midoumessai123456789@gmail.com'}`} method="POST" className="space-y-6">
-            <input type="hidden" name="_subject" value="New Project Inquiry from GDEVALOP" />
-            <input type="hidden" name="_captcha" value="false" />
+          <form onSubmit={onSubmit} className="space-y-6">
+            <input type="hidden" name="subject" value="New Project Inquiry from GDEVALOP" />
+            <input type="hidden" name="from_name" value="GDEVALOP Contact Form" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-bold ml-1">{t.contact.name}</label>
@@ -88,10 +119,17 @@ export default function ContactPage() {
 
             <button 
               type="submit"
-              className="w-full bg-brand-primary text-white hover:bg-blue-600 px-8 py-5 rounded-2xl font-black text-xl transition-all transform hover:scale-[1.02]"
+              disabled={isSubmitting}
+              className="w-full bg-brand-primary text-white hover:bg-blue-600 px-8 py-5 rounded-2xl font-black text-xl transition-all transform hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100 flex items-center justify-center gap-2"
             >
-              {t.contact.submit}
+              {isSubmitting && <Loader2 className="w-5 h-5 animate-spin" />}
+              {isSubmitting ? "Sending..." : t.contact.submit}
             </button>
+            {result && (
+              <div className={`text-center font-bold ${result.includes("Error") ? "text-red-500" : "text-green-500"}`}>
+                {result}
+              </div>
+            )}
           </form>
         </motion.div>
       </div>
