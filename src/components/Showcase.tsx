@@ -3,9 +3,9 @@ import { ExternalLink, Monitor } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 
 const templates = [
-  { name: 'Gridstone', url: 'https://gridstone-template.webflow.io/' },
-  { name: 'Goma', url: 'https://goma-by-casperbroe.webflow.io/' },
-  { name: 'Brewlab', url: 'https://brewlab-template.webflow.io/' }
+  { name: 'Gridstone', url: 'https://gridstone-template.webflow.io/', image: '/assets/template1.gif' },
+  { name: 'Goma', url: 'https://goma-by-casperbroe.webflow.io/', image: '/assets/template2.gif' },
+  { name: 'Brewlab', url: 'https://brewlab-template.webflow.io/', image: '/assets/template3.gif' }
 ];
 
 export default function Showcase() {
@@ -48,7 +48,7 @@ export default function Showcase() {
               
               <div className="relative w-full overflow-hidden bg-black/5 dark:bg-white/5 rounded-2xl group/image flex-1 border border-black/5 dark:border-white/5">
                 <img 
-                  src="/assets/experiments.gif" 
+                  src={template.image} 
                   alt={template.name}
                   className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 transition-all duration-700"
                 />
