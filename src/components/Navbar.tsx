@@ -15,8 +15,8 @@ export default function Navbar({ inPage = false }: { inPage?: boolean }) {
       className="fixed top-0 left-0 right-0 z-50 px-2 sm:px-6 py-2 sm:py-4"
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between glass px-3 sm:px-6 py-3 rounded-2xl">
-        <Link to="/" className="flex items-center gap-1 sm:gap-2">
-          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-brand-primary rounded-md sm:rounded-lg flex items-center justify-center font-bold text-white text-xs sm:text-base">G</div>
+        <Link to="/" className="flex items-center gap-1 sm:gap-2 group/logo">
+          <img src="/assets/logo.png" alt="GDEVALOP Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain group-hover/logo:scale-110 transition-transform" />
           <span className="font-display font-bold text-sm sm:text-xl tracking-tighter text-black dark:text-white hidden min-[360px]:block">GDEVALOP</span>
         </Link>
 
@@ -80,8 +80,8 @@ export default function Navbar({ inPage = false }: { inPage?: boolean }) {
         className={`fixed top-0 bottom-0 ${lang === 'ar' ? 'right-0' : 'left-0'} w-[80vw] max-w-sm bg-white dark:bg-[#0f172a] shadow-2xl z-[70] p-6 flex flex-col lg:hidden`}
       >
         <div className="flex items-center justify-between mb-12">
-          <Link to="/" className="flex items-center gap-2" onClick={() => setIsSidebarOpen(false)}>
-            <div className="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center font-bold text-white text-base">G</div>
+          <Link to="/" className="flex items-center gap-2 group/logo" onClick={() => setIsSidebarOpen(false)}>
+            <img src="/assets/logo.png" alt="GDEVALOP Logo" className="w-10 h-10 object-contain group-hover/logo:scale-110 transition-transform" />
             <span className="font-display font-bold text-xl tracking-tighter text-black dark:text-white">GDEVALOP</span>
           </Link>
           <button onClick={() => setIsSidebarOpen(false)} className="text-gray-600 dark:text-gray-300 hover:text-brand-primary focus:outline-none">

@@ -9,8 +9,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-24">
           <div className="md:col-span-5">
-            <div className="flex items-center gap-2 mb-8">
-              <div className="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center font-bold text-white">G</div>
+            <div className="flex items-center gap-2 mb-8 group/logo">
+              <img src="/assets/logo.png" alt="GDEVALOP Logo" className="w-10 h-10 object-contain group-hover/logo:scale-110 transition-transform" />
               <span className="font-display font-bold text-2xl tracking-tighter text-black dark:text-white">GDEVALOP</span>
             </div>
             <p className="text-gray-600 dark:text-gray-400 text-lg mb-8 max-w-sm">

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://github.com/DragoMvevi/local-biz-agency/sitemap.xml
